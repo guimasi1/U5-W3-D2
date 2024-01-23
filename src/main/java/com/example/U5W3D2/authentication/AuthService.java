@@ -5,6 +5,7 @@ import com.example.U5W3D2.exceptions.UnauthorizedException;
 import com.example.U5W3D2.security.JWTTools;
 import com.example.U5W3D2.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,9 @@ public class AuthService {
     @Autowired
     private JWTTools jwtTools;
 
+    @Autowired
+    private PasswordEncoder bCrypt;
+
 
 
     public String authenticateUser(UserLoginDTO body) {
@@ -25,7 +29,7 @@ public class AuthService {
         System.out.println(user.getEmail() + " email dell'user trovato con usersService");
         System.out.println(body.password() + " password del body");
         System.out.println(user.getPassword() + " password dell'user trovato con userService");
-        if(body.password().equals(user.getPassword())) {
+        if(bCrypt.matches(body.password(),user.getPassword())) {
             return jwtTools.createToken(user);
         } else {
             throw new UnauthorizedException("Errore nelle credenziali");
@@ -47,7 +51,7 @@ public class AuthService {
         newUser.setEmail(user.email());
         newUser.setRole(UserRole.USER);
         newUser.setAvatarUrl("https://ui-avatars.com/api/?name=" + user.name() + "+" + user.surname());
-        newUser.setPassword(user.password());
+        newUser.setPassword(bCrypt.encode(user.password()));
         return usersDAO.save(newUser);
     }
 
