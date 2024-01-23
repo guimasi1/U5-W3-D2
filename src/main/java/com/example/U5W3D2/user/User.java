@@ -2,6 +2,7 @@ package com.example.U5W3D2.user;
 
 import com.example.U5W3D2.device.Device;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @ToString
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"password", "enabled", "authorities","accountNonExpired", "credentialsNonExpired","accountNonLocked"} )
 public class User implements UserDetails {
     @Setter(AccessLevel.NONE)
     @Id
